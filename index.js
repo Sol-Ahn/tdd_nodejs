@@ -1,8 +1,9 @@
 // Hello World example
 const express = require("express");
 const morgan = require("morgan");
+const { urlencoded } = require("express");
 const app = express();
-const users = [
+let users = [
   { id: 1, name: "alice" },
   { id: 2, name: "tom" },
   { id: 3, name: "chris" },
@@ -23,6 +24,14 @@ app.get("/users/:id", (req, res) => {
   const user = users.filter((user) => user.id === id)[0];
   if (!user) res.status(404).end();
   res.json(user);
+});
+
+app.delete("/users/:id", (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (Number.isNaN(id)) res.status(400).end();
+
+  users = users.filter((user) => user.id !== id);
+  res.status(204).end();
 });
 
 app.listen(3000, () => {
