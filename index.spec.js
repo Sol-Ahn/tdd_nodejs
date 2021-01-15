@@ -30,7 +30,7 @@ describe("GET /users", () => {
   });
 });
 
-describe("GET /users/1 ", () => {
+describe("GET /users/:id ", () => {
   describe("성공시", () => {
     it("id가 1인 유저를 반환", (done) => {
       request(app)
@@ -53,7 +53,7 @@ describe("GET /users/1 ", () => {
   });
 });
 
-describe("DELETE /users/1", () => {
+describe("DELETE /users/:id", () => {
   describe("성공시", () => {
     it("204를 응답", (done) => {
       request(app).delete("/users/1").expect(204).end(done);
@@ -98,6 +98,39 @@ describe("POST /users", () => {
 
     it("name이 중복일 경우 409를 반환", (done) => {
       request(app).post("/users").send({ name: "sol" }).expect(409).end(done);
+    });
+  });
+});
+
+describe("PUT /users/:id", () => {
+  describe("성공시", () => {
+    it("변경된 name을 반환", (done) => {
+      const name = "tony";
+      request(app)
+        .put("/users/2")
+        .send({ name })
+        .end((err, res) => {
+          res.body.should.have.property("name", name);
+        }, done());
+    });
+  });
+
+  describe("실패시", () => {
+    it("정수가 아닌 id일 경우 400을 반환", (done) => {
+      request(app).put("/users/one").expect(400).end(done);
+    });
+    it("name이 없을 경우 400을 반환", (done) => {
+      request(app).put("/users/1").expect(400).end(done);
+    });
+    it("존재하지 않는 유저일 경우 404를 반환", (done) => {
+      request(app)
+        .put("/users/999")
+        .send({ name: "foo" })
+        .expect(404)
+        .end(done);
+    });
+    it("이름이 중복일 경우 409를 반환", (done) => {
+      request(app).put("/users/2").send({ name: "tony" }).expect(409).end(done);
     });
   });
 });

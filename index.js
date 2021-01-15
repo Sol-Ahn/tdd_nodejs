@@ -47,6 +47,20 @@ app.post("/users", (req, res) => {
   res.status(201).json(user);
 });
 
+app.put("/users/:id", (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (Number.isNaN(id)) res.status(400).end();
+
+  const name = req.body.name;
+  if (!name) res.status(400).end();
+  const isConfilct = users.filter((user) => user.name === name).length;
+  if (isConfilct) res.status(409).end();
+
+  const user = users.filter((user) => user.id === id)[0];
+  if (!user) res.status(404).end();
+  user.name = name;
+});
+
 app.listen(3000, () => {
   console.log(`Example app listening at http://localhost:3000`);
 });
