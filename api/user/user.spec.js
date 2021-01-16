@@ -1,6 +1,6 @@
 const request = require("supertest");
 const should = require("should");
-const app = require("./index");
+const app = require("../../");
 
 describe("GET /users", () => {
   describe("성공시", () => {
@@ -106,11 +106,13 @@ describe("PUT /users/:id", () => {
   describe("성공시", () => {
     it("변경된 name을 반환", (done) => {
       const name = "tony";
+      let body;
       request(app)
         .put("/users/2")
         .send({ name })
         .end((err, res) => {
-          res.body.should.have.property("name", name);
+          body = res.body;
+          body.should.have.property("name", name);
         }, done());
     });
   });
