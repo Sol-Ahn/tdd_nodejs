@@ -1,8 +1,12 @@
 const request = require("supertest");
 const should = require("should");
 const app = require("../../");
+const models = require("../../models");
 
 describe("GET /users", () => {
+  const users = [{ name: "alice" }, { name: "bek" }, { name: "chris" }];
+  before(() => models.sequelize.sync({ force: true }));
+  before(() => models.User.bulkCreate(users));
   describe("성공시", () => {
     it("유저 객체를 담은 배열로 응답", (done) => {
       request(app)
@@ -31,6 +35,9 @@ describe("GET /users", () => {
 });
 
 describe("GET /users/:id ", () => {
+  const users = [{ name: "alice" }, { name: "bek" }, { name: "chris" }];
+  before(() => models.sequelize.sync({ force: true }));
+  before(() => models.User.bulkCreate(users));
   describe("성공시", () => {
     it("id가 1인 유저를 반환", (done) => {
       request(app)
@@ -54,6 +61,9 @@ describe("GET /users/:id ", () => {
 });
 
 describe("DELETE /users/:id", () => {
+  const users = [{ name: "alice" }, { name: "bek" }, { name: "chris" }];
+  before(() => models.sequelize.sync({ force: true }));
+  before(() => models.User.bulkCreate(users));
   describe("성공시", () => {
     it("204를 응답", (done) => {
       request(app).delete("/users/1").expect(204).end(done);
@@ -68,6 +78,9 @@ describe("DELETE /users/:id", () => {
 });
 
 describe("POST /users", () => {
+  const users = [{ name: "alice" }, { name: "bek" }, { name: "chris" }];
+  before(() => models.sequelize.sync({ force: true }));
+  before(() => models.User.bulkCreate(users));
   describe("성공시", () => {
     let name = "sol",
       body;
@@ -103,6 +116,9 @@ describe("POST /users", () => {
 });
 
 describe("PUT /users/:id", () => {
+  const users = [{ name: "alice" }, { name: "bek" }, { name: "chris" }];
+  before(() => models.sequelize.sync({ force: true }));
+  before(() => models.User.bulkCreate(users));
   describe("성공시", () => {
     it("변경된 name을 반환", (done) => {
       const name = "tony";
@@ -132,7 +148,11 @@ describe("PUT /users/:id", () => {
         .end(done);
     });
     it("이름이 중복일 경우 409를 반환", (done) => {
-      request(app).put("/users/2").send({ name: "tony" }).expect(409).end(done);
+      request(app)
+        .put("/users/3")
+        .send({ name: "alice" })
+        .expect(409)
+        .end(done);
     });
   });
 });
